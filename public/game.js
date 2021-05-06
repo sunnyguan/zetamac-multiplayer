@@ -123,7 +123,6 @@ function start() {
 /* Socket events */
 
 socket.on("login", function(data) {
-    update_online(data.numPlayers);
     playerId = data.playerId;
     players[playerId] = data.player;
     init_names();
@@ -133,7 +132,6 @@ var opponentId = -1;
 
 socket.on("match found", function(data) {
     players[data.player.id] = data.player;
-    numPlayers = data.numPlayers;
     opponentId = data.opponent;
     start();
 });
@@ -141,17 +139,13 @@ socket.on("match found", function(data) {
 var online_counter = document.getElementById('online');
 
 function update_online(count) {
-    numPlayers = count;
-    online_counter.textContent = numPlayers + "";
+    numPlayers = count.numPlayers;
+    online = count.numOnline;
+    online_counter.textContent = "Online: " + online + ", in game: " + numPlayers;
 }
 
-socket.on("player left", function(data) {
-    delete players[data.playerId];
-    update_online(data.numPlayers);
-});
-
 socket.on("new player", function(data) {
-    update_online(data.numPlayers);
+    update_online(data);
 });
 
 socket.on("update positions", function(data) {

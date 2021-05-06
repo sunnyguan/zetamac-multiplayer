@@ -5,7 +5,7 @@ var io = require("socket.io")(server);
 var port = process.env.PORT || 3000;
 
 var players = {};
-var numPlayers = 0;
+var online = 0;
 
 server.listen(port, function() {
     console.log("Server listening at port %d", port);
@@ -14,13 +14,17 @@ server.listen(port, function() {
 app.use(express.static(__dirname + "/public"));
 
 io.on("connection", function(socket) {
-    ++numPlayers;
-    var playerAdded = true;
+    ++online;
+
+    function update_players() {
+        io.emit("new player", {
+            numPlayers: Object.keys(players).length,
+            numOnline: online
+        });
+    }
 
     socket.on("enter", function() {
-        io.emit("new player", {
-            numPlayers: numPlayers,
-        });
+        update_players();
     });
 
     socket.on("add player", function(name) {
@@ -32,10 +36,10 @@ io.on("connection", function(socket) {
             score: "",
             opponent: "-1",
         };
+        update_players();
         socket.emit("login", {
             playerId: socket.id,
             player: players[socket.id],
-            numPlayers: numPlayers,
         });
 
         var done = false;
@@ -46,18 +50,12 @@ io.on("connection", function(socket) {
 
                 socket.broadcast.to(key).emit("match found", {
                     player: players[socket.id],
-                    numPlayers: numPlayers,
                     opponent: socket.id,
                 });
 
                 socket.emit("match found", {
                     player: players[key],
-                    numPlayers: numPlayers,
                     opponent: key,
-                });
-
-                socket.broadcast.emit("new player", {
-                    numPlayers: numPlayers,
                 });
 
                 done = true;
@@ -66,20 +64,13 @@ io.on("connection", function(socket) {
     });
 
     function disconnect() {
-        if (playerAdded) {
-            delete players[socket.id];
-
-            --numPlayers;
-
-            socket.broadcast.emit("player left", {
-                playerId: socket.id,
-                numPlayers: numPlayers,
-            });
-        }
+        delete players[socket.id];
+        update_players();
     }
 
     socket.on("disconnect", function() {
         disconnect();
+        --online;
     });
 
     socket.on("game end", function() {
