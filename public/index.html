@@ -11,11 +11,15 @@
   </head>
   <body class="text-gray-700 flex">
     <div class="h-screen w-72 bg-blue-100 p-4 hidden sm:block">
-      <div class="text-xl text-bold text-center mb-4">Current Games</div>
+      <div class="text-xl text-bold text-center mb-4">Spectate</div>
       <div class="grid grid-cols-1 gap-4" id="games"></div>
     </div>
-    <div id="parent" class="h-full w-full">
-      <div id="start" class="flex h-screen">
+    <div id="parent" class="flex flex-col h-screen w-full">
+      <div class="w-full bg-indigo-100 p-4 pl-8 flex">
+        <div class="text-left text-xl font-bold flex-grow">Zetamac</div>
+        <div class="text-right my-auto" id="online">0</div>
+      </div>
+      <div id="start" class="flex flex-grow">
         <div class="m-auto">
           <input
             id="player"
@@ -24,9 +28,9 @@
           />
         </div>
       </div>
-      <div id="game" class="hidden w-full h-full flex">
+      <div id="game" class="hidden w-full flex flex-grow">
         <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 h-full gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div id="mine" class="flex mx-auto flex-col">
             <div class="flex mx-auto">
               <div class="h-8 text-2xl mb-8 mr-4 text-bold">
@@ -45,7 +49,8 @@
           <div id="theirs" class="flex mx-auto flex-col">
             <div class="flex mx-auto">
               <div class="h-8 text-2xl mb-8 mr-4 text-bold">
-                  <span id="name2"></span><span id="wait">Waiting for opponent...</span>
+                <span id="name2"></span
+                ><span id="wait">Waiting for opponent...</span>
                 <span id="score2" class=""></span>
               </div>
             </div>
@@ -59,7 +64,6 @@
         </div>
       </div>
     </div>
-    <div class="fixed bottom-0 left-0 p-8"><span id="online">0</span></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
   </body>
