@@ -6,6 +6,7 @@ var port = process.env.PORT || 3000;
 
 var players = {};
 var online = 0;
+var CAP = 30;
 
 var games = {};
 
@@ -79,6 +80,15 @@ io.on("connection", function(socket) {
         update_players();
     });
 
+    socket.on("spectate", function(info) {
+        var id = info.id;
+        if (id in games) {
+            games[id].spectators.push(socket.id);
+        } else {
+            // game does not exist!
+        }
+    });
+
     socket.on("add player", function(name) {
         players[socket.id] = {
             id: socket.id,
@@ -103,7 +113,9 @@ io.on("connection", function(socket) {
 
                 games[key] = {
                     name1: name,
-                    name2: players[key].name
+                    name2: players[key].name,
+                    id2: socket.id,
+                    spectators: []
                 };
 
                 update_games();
@@ -119,6 +131,21 @@ io.on("connection", function(socket) {
                     opponent: key,
                     questions: questions
                 });
+
+                var time = CAP + 5;
+                var x = setInterval(function() {
+                    if (time <= 0) {
+                        clearInterval(x);
+                    }
+                    socket.emit("tick", { time: time });
+                    socket.broadcast.to(key).emit("tick", { time: time });
+                    if (key in games) {
+                        games[key].spectators.forEach(spectator => {
+                            socket.broadcast.to(spectator).emit("tick", { time: time });
+                        });
+                    }
+                    time--;
+                }, 1000);
 
                 done = true;
             }
@@ -157,5 +184,15 @@ io.on("connection", function(socket) {
         socket.broadcast.to(players[socket.id].opponent).emit("update positions", {
             players: players,
         });
+
+        if (socket.id in games) {
+            games[socket.id].spectators.forEach(spectator => {
+                socket.broadcast.to(spectator).emit("update positions", { players: players });
+            });
+        } else if (players[socket.id].opponent in games) {
+            games[players[socket.id].opponent].spectators.forEach(spectator => {
+                socket.broadcast.to(spectator).emit("update positions", { players: players });
+            });
+        }
     });
 });

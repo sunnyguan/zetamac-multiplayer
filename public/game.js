@@ -79,7 +79,6 @@ var game = document.getElementById("game");
 var cap = 30;
 
 function init_names() {
-    console.log(players);
     Object.keys(players).forEach((key) => {
         if (key == playerId) {
             name1.textContent = players[key].name;
@@ -91,38 +90,6 @@ function init_names() {
 
 function start() {
     init_names();
-
-    var time = cap + 5;
-    var x = setInterval(function() {
-        if (time >= cap + 2) {
-            banner.textContent = time - cap - 1 + "..";
-        } else if (time == cap + 1) {
-            banner.textContent = "GO!";
-        } else if (time == cap) {
-            banner.textContent = time + "";
-            textbox1.readOnly = false;
-            new_question();
-        } else if (time <= 0) {
-            banner.textContent = "TIME!";
-
-            var final_score1 = parseInt(score1.textContent);
-            var final_score2 = parseInt(score2.textContent);
-            if (final_score1 < final_score2) {
-                banner.textContent = "You lost! (refresh to start new game)";
-            } else if (final_score1 > final_score2) {
-                banner.textContent = "You won! (refresh to start new game)";
-            } else {
-                banner.textContent = "Tied game! (refresh to start new game)";
-            }
-
-            textbox1.readOnly = true;
-            socket.emit("game end");
-            clearInterval(x);
-        } else {
-            banner.textContent = time + "";
-        }
-        time--;
-    }, 1000);
 }
 
 /* Socket events */
@@ -152,13 +119,28 @@ function createElementFromHTML(htmlString) {
     return div.firstChild;
 }
 
+var spectating = 0;
+var spec_id1 = -1;
+var spec_id2 = -1;
+
+function spectate(id, id2) {
+    if (spectating === 0) {
+        socket.emit("spectate", { id: id });
+        spec_id1 = id;
+        spec_id2 = id2;
+        console.log("now spectating " + id + " and " + id2);
+        startSpectating();
+        spectating = 1;
+    }
+}
+
 socket.on("update games", function(data) {
     games = data.games;
     list_games.innerHTML = "";
     Object.keys(games).forEach((id) => {
         var info = games[id];
         var element = createElementFromHTML(`
-            <div class="bg-blue-200 shadow-md rounded-xl p-2 text-center">
+            <div class="bg-blue-200 shadow-md rounded-xl p-2 text-center" onclick="spectate('${id}', '${info.id2}')">
                 ${info.name1} vs ${info.name2}
             </div>
             `);
@@ -178,13 +160,58 @@ socket.on("new player", function(data) {
     update_online(data);
 });
 
+socket.on("tick", function(data) {
+    var time = data.time;
+    if (time >= cap + 2) {
+        banner.textContent = time - cap - 1 + "..";
+    } else if (time == cap + 1) {
+        banner.textContent = "GO!";
+    } else if (time == cap) {
+        banner.textContent = time + "";
+        if (spectating !== 1)
+            textbox1.readOnly = false;
+        new_question();
+    } else if (time <= 0) {
+        var final_score1 = parseInt(score1.textContent);
+        var final_score2 = parseInt(score2.textContent);
+        if (final_score1 < final_score2) {
+            banner.textContent = name2.textContent + " won! (refresh to start new game)";
+        } else if (final_score1 > final_score2) {
+            banner.textContent = name1.textContent + " won! (refresh to start new game)";
+        } else {
+            banner.textContent = "Tied game! (refresh to start new game)";
+        }
+
+        textbox1.readOnly = true;
+        socket.emit("game end");
+    } else {
+        banner.textContent = time + "";
+    }
+});
+
 socket.on("update positions", function(data) {
     players = data.players;
+
+    document.getElementById("wait").textContent = ":";
     Object.keys(players).forEach((key) => {
-        if (key === opponentId) {
-            textbox2.value = players[key].text;
-            question2.textContent = players[key].question;
-            score2.textContent = players[key].score;
+        if (spectating === 1) {
+            if (key === spec_id1) {
+                name1.textContent = players[spec_id1].name;
+                textbox1.value = players[key].text;
+                question1.textContent = players[key].question;
+                score1.textContent = players[key].score;
+            } else if (key === spec_id2) {
+                name2.textContent = players[spec_id2].name;
+                textbox2.value = players[key].text;
+                question2.textContent = players[key].question;
+                score2.textContent = players[key].score;
+            }
+        } else {
+            if (key === opponentId) {
+                textbox2.value = players[key].text;
+                question2.textContent = players[key].question;
+                score2.textContent = players[key].score;
+            }
         }
     });
 });
@@ -192,6 +219,8 @@ socket.on("update positions", function(data) {
 /* Start connection */
 
 var startConnection = function() {
+    spectating = -1; // disable spectating
+
     var startEl = document.getElementById("start");
     var playerEl = document.getElementById("player");
     playerName = playerEl.value;
@@ -200,4 +229,11 @@ var startConnection = function() {
         game.style.display = "block";
         socket.emit("add player", playerName);
     }
+};
+
+var startSpectating = function() {
+    var startEl = document.getElementById("start");
+    var playerEl = document.getElementById("player");
+    document.getElementById("parent").removeChild(startEl);
+    game.style.display = "block";
 };
