@@ -72,6 +72,7 @@ var game = document.getElementById("game");
 var cap = 30;
 
 function init_names() {
+    console.log(players);
     Object.keys(players).forEach((key) => {
         if (key == playerId) {
             name1.textContent = players[key].name;
@@ -97,6 +98,7 @@ function start() {
         } else if (time <= 0) {
             banner.textContent = "TIME!";
             textbox1.readOnly = true;
+            socket.emit("game end");
             clearInterval(x);
         } else {
             banner.textContent = time + "";
@@ -108,21 +110,16 @@ function start() {
 /* Socket events */
 
 socket.on("login", function(data) {
-    players = data.players;
     numPlayers = data.numPlayers;
     playerId = data.playerId;
+    players[playerId] = data.player;
     init_names();
-    if (numPlayers == 2) {
-        start();
-    }
 });
 
-socket.on("player joined", function(data) {
+socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     numPlayers = data.numPlayers;
-    if (numPlayers == 2) {
-        start();
-    }
+    start();
 });
 
 socket.on("player left", function(data) {

@@ -22,25 +22,41 @@ io.on('connection', function(socket) {
             'name': name,
             'text': "",
             'question': "",
-            'score': ''
+            'score': '',
+            'opponent': '-1'
         };
+        socket.emit('login', {
+            'playerId': socket.id,
+            'player': players[socket.id],
+            'numPlayers': numPlayers
+        });
+
+        var done = false;
+        Object.keys(players).forEach(key => {
+            if (!done && key !== socket.id && players[key].opponent === '-1') {
+                players[socket.id].opponent = key;
+                players[key].opponent = socket.id;
+
+                socket.broadcast.to(key).emit('match found', {
+                    'player': players[socket.id],
+                    'numPlayers': numPlayers
+                });
+
+                socket.emit('match found', {
+                    'player': players[key],
+                    'numPlayers': numPlayers
+                });
+
+                done = true;
+            }
+        });
 
         ++numPlayers;
         playerAdded = true;
 
-        socket.emit('login', {
-            'playerId': socket.id,
-            'players': players,
-            'numPlayers': numPlayers
-        });
-
-        socket.broadcast.emit('player joined', {
-            'player': players[socket.id],
-            'numPlayers': numPlayers
-        });
     });
 
-    socket.on('disconnect', function() {
+    function disconnect() {
         if (playerAdded) {
             delete players[socket.id];
 
@@ -51,7 +67,15 @@ io.on('connection', function(socket) {
                 'numPlayers': numPlayers
             });
         }
+    }
+
+    socket.on('disconnect', function() {
+        disconnect();
     });
+
+    socket.on('game end', function() {
+        disconnect();
+    })
 
     socket.on('update keyboard', function(keyboard) {
         players[socket.id].text = keyboard["text"];
