@@ -97,6 +97,17 @@ function start() {
             new_question();
         } else if (time <= 0) {
             banner.textContent = "TIME!";
+            
+            var final_score1 = parseInt(score1.textContent);
+            var final_score2 = parseInt(score2.textContent);
+            if (final_score1 < final_score2) {
+                banner.textContent = "You lost! (refresh to start new game)";
+            } else if (final_score1 > final_score2) {
+                banner.textContent = "You won! (refresh to start new game)";
+            } else {
+                banner.textContent = "Tied game! (refresh to start new game)";
+            }
+
             textbox1.readOnly = true;
             socket.emit("game end");
             clearInterval(x);
