@@ -3,56 +3,63 @@
   <head>
     <title>Zetamac Multiplayer</title>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
       rel="stylesheet"
     />
   </head>
-  <body class="text-gray-700">
-    <div id="start" class="flex h-screen">
-      <div class="m-auto">
-        <input
-          id="player"
-          class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
-          placeholder="Your name here"
-        />
-      </div>
+  <body class="text-gray-700 flex">
+    <div class="h-screen w-72 bg-blue-100 p-4 hidden sm:block">
+      <div class="text-xl text-bold text-center mb-4">Current Games</div>
+      <div class="grid grid-cols-1 gap-4" id="games"></div>
     </div>
-    <div id="game" class="hidden w-full h-full">
-      <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
-      <div class="grid grid-cols-2 h-full">
-        <div id="mine" class="flex mx-auto flex-col">
-          <div class="flex mx-auto">
-            <div class="h-8 text-2xl mb-8 mr-4 text-bold">
-              <span id="name1"></span> score:
-              <span id="score1" class="">0</span>
-            </div>
-          </div>
-
-          <div id="question1" class="h-8 flex mx-auto text-2xl mb-4"></div>
+    <div id="parent" class="h-full w-full">
+      <div id="start" class="flex h-screen">
+        <div class="m-auto">
           <input
-            id="text1"
-            readonly
+            id="player"
             class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
-          />
-        </div>
-        <div id="theirs" class="flex mx-auto flex-col">
-          <div class="flex mx-auto">
-            <div class="h-8 text-2xl mb-8 mr-4 text-bold">
-              <span id="name2"></span> score:
-              <span id="score2" class="">0</span>
-            </div>
-          </div>
-          <div id="question2" class="h-8 flex mx-auto text-2xl mb-4"></div>
-          <input
-            id="text2"
-            readonly
-            class="ring-red-600 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2"
+            placeholder="Your name here"
           />
         </div>
       </div>
+      <div id="game" class="hidden w-full h-full flex">
+        <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 h-full gap-8">
+          <div id="mine" class="flex mx-auto flex-col">
+            <div class="flex mx-auto">
+              <div class="h-8 text-2xl mb-8 mr-4 text-bold">
+                <span id="name1"></span> score:
+                <span id="score1" class="">0</span>
+              </div>
+            </div>
+
+            <div id="question1" class="h-8 flex mx-auto text-2xl mb-4"></div>
+            <input
+              id="text1"
+              readonly
+              class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
+            />
+          </div>
+          <div id="theirs" class="flex mx-auto flex-col">
+            <div class="flex mx-auto">
+              <div class="h-8 text-2xl mb-8 mr-4 text-bold">
+                  <span id="name2"></span><span id="wait">Waiting for opponent...</span>
+                <span id="score2" class=""></span>
+              </div>
+            </div>
+            <div id="question2" class="h-8 flex mx-auto text-2xl mb-4"></div>
+            <input
+              id="text2"
+              readonly
+              class="ring-red-600 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="fixed bottom-0 right-0 p-8"><span id="online">0</span></div>
+    <div class="fixed bottom-0 left-0 p-8"><span id="online">0</span></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
   </body>

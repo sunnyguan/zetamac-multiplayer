@@ -7,6 +7,8 @@ var port = process.env.PORT || 3000;
 var players = {};
 var online = 0;
 
+var games = {};
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -31,6 +33,12 @@ function update_players() {
     io.emit("new player", {
         numPlayers: Object.keys(players).length,
         numOnline: online
+    });
+}
+
+function update_games() {
+    io.emit("update games", {
+        games: games
     });
 }
 
@@ -69,6 +77,13 @@ io.on("connection", function(socket) {
                 players[key].opponent = socket.id;
                 questions = generate_questions(100);
 
+                games[key] = {
+                    name1: name,
+                    name2: players[key].name
+                };
+
+                update_games();
+
                 socket.broadcast.to(key).emit("match found", {
                     player: players[socket.id],
                     opponent: socket.id,
@@ -87,6 +102,11 @@ io.on("connection", function(socket) {
     });
 
     function disconnect() {
+        delete games[socket.id];
+        if (players[socket.id])
+            delete games[players[socket.id].opponent];
+        update_games();
+
         delete players[socket.id];
         update_players();
     }
@@ -109,7 +129,7 @@ io.on("connection", function(socket) {
             players: players,
         });
 
-        socket.broadcast.emit("update positions", {
+        socket.broadcast.to(players[socket.id].opponent).emit("update positions", {
             players: players,
         });
     });

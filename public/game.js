@@ -10,6 +10,8 @@ var playerName;
 var questions = [];
 var question_id = 0;
 
+var games = {};
+
 /* Keyboard events */
 
 var question1 = document.getElementById("question1");
@@ -137,10 +139,34 @@ socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     opponentId = data.opponent;
     questions = data.questions;
+    document.getElementById("wait").textContent = " score:";
+    score1.textContent = "0";
     start();
 });
 
-var online_counter = document.getElementById('online');
+var list_games = document.getElementById("games");
+
+function createElementFromHTML(htmlString) {
+    var div = document.createElement("div");
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
+}
+
+socket.on("update games", function(data) {
+    games = data.games;
+    list_games.innerHTML = "";
+    Object.keys(games).forEach((id) => {
+        var info = games[id];
+        var element = createElementFromHTML(`
+            <div class="bg-blue-200 shadow-md rounded-xl p-2 text-center">
+                ${info.name1} vs ${info.name2}
+            </div>
+            `);
+        list_games.appendChild(element);
+    });
+});
+
+var online_counter = document.getElementById("online");
 
 function update_online(count) {
     numPlayers = count.numPlayers;
@@ -170,7 +196,7 @@ var startConnection = function() {
     var playerEl = document.getElementById("player");
     playerName = playerEl.value + "'s";
     if (playerName) {
-        document.body.removeChild(startEl);
+        document.getElementById("parent").removeChild(startEl);
         game.style.display = "block";
         socket.emit("add player", playerName);
     }
