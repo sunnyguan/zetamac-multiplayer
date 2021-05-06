@@ -1,0 +1,15 @@
+{
+  "name": "zetamac-multiplayer",
+  "version": "1.0.0",
+  "description": "Multiplayer Zetamac",
+  "main": "index.js",
+  "author": "Sunny Guan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.17.1",
+    "socket.io": "4.0.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Socket.io Game</title>
+    <meta charset="UTF-8" />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="text-gray-700 min-h-screen">
+    <div id="start" class="flex justify-center h-full">
+      <input id="player" class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600" placeholder="Your name here"/>
+    </div>
+    <div id="game" class="hidden">
+      <div id="banner"></div>
+      <div id="mine">
+        <div id="question1"></div>
+        <input id="text1" readonly />
+      </div>
+      <div id="theirs">
+        <div id="question2"></div>
+        <input id="text2" readonly />
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/game.js"></script>
+  </body>
+</html>

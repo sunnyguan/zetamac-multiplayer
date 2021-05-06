@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Zetamac Multiplayer</title>
+    <meta charset="UTF-8" />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="text-gray-700 flex h-screen">
+    <div id="start" class="m-auto">
+      <input
+        id="player"
+        class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
+        placeholder="Your name here"
+      />
+    </div>
+    <div id="game" class="hidden w-full h-full">
+      <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
+      <div class="grid grid-cols-2 h-full">
+        <div id="mine" class="flex mx-auto flex-col">
+          <div class="flex mx-auto">
+            <div class="h-8 text-2xl mb-8 mr-4 text-bold">
+              <span id="name1"></span> score:
+              <span id="score1" class="">0</span>
+            </div>
+          </div>
+
+          <div id="question1" class="h-8 flex mx-auto text-2xl mb-4"></div>
+          <input
+            id="text1"
+            readonly
+            class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
+          />
+        </div>
+        <div id="theirs" class="flex mx-auto flex-col">
+          <div class="flex mx-auto">
+            <div class="h-8 text-2xl mb-8 mr-4 text-bold">
+              <span id="name2"></span> score:
+              <span id="score2" class="">0</span>
+            </div>
+          </div>
+          <div id="question2" class="h-8 flex mx-auto text-2xl mb-4"></div>
+          <input
+            id="text2"
+            readonly
+            class="ring-red-600 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2"
+          />
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/game.js"></script>
+  </body>
+</html>
