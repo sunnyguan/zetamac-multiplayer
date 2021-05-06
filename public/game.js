@@ -1,4 +1,6 @@
 var socket = io();
+socket.emit("enter");
+
 var keyboard = { text: "", question: "", score: "0" };
 
 var players = {};
@@ -97,7 +99,7 @@ function start() {
             new_question();
         } else if (time <= 0) {
             banner.textContent = "TIME!";
-            
+
             var final_score1 = parseInt(score1.textContent);
             var final_score2 = parseInt(score2.textContent);
             if (final_score1 < final_score2) {
@@ -121,7 +123,7 @@ function start() {
 /* Socket events */
 
 socket.on("login", function(data) {
-    numPlayers = data.numPlayers;
+    update_online(data.numPlayers);
     playerId = data.playerId;
     players[playerId] = data.player;
     init_names();
@@ -136,9 +138,20 @@ socket.on("match found", function(data) {
     start();
 });
 
+var online_counter = document.getElementById('online');
+
+function update_online(count) {
+    numPlayers = count;
+    online_counter.textContent = numPlayers + "";
+}
+
 socket.on("player left", function(data) {
     delete players[data.playerId];
-    numPlayers = data.numPlayers;
+    update_online(data.numPlayers);
+});
+
+socket.on("new player", function(data) {
+    update_online(data.numPlayers);
 });
 
 socket.on("update positions", function(data) {

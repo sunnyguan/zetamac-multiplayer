@@ -8,13 +8,15 @@
       rel="stylesheet"
     />
   </head>
-  <body class="text-gray-700 flex h-screen">
-    <div id="start" class="m-auto">
-      <input
-        id="player"
-        class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
-        placeholder="Your name here"
-      />
+  <body class="text-gray-700">
+    <div id="start" class="flex h-screen">
+      <div class="m-auto">
+        <input
+          id="player"
+          class="ring-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none ring-2 focus:ring-blue-600"
+          placeholder="Your name here"
+        />
+      </div>
     </div>
     <div id="game" class="hidden w-full h-full">
       <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
@@ -50,6 +52,7 @@
         </div>
       </div>
     </div>
+    <div class="fixed bottom-0 right-0 p-8">Currently online: <span id="online">0</span></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
   </body>
