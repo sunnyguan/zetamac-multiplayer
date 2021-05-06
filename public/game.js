@@ -194,7 +194,7 @@ socket.on("update positions", function(data) {
 var startConnection = function() {
     var startEl = document.getElementById("start");
     var playerEl = document.getElementById("player");
-    playerName = playerEl.value + "'s";
+    playerName = playerEl.value;
     if (playerName) {
         document.getElementById("parent").removeChild(startEl);
         game.style.display = "block";
