@@ -16,7 +16,30 @@ function getRandomInt(min, max) {
 }
 
 function generate_question() {
-    var question = getRandomInt(0, 10) + " + " + getRandomInt(0, 10);
+    var choice = getRandomInt(0, 3);
+
+    var question = "";
+    if (choice === 0) {
+        // +
+        var num1 = getRandomInt(2, 100);
+        var num2 = getRandomInt(2, 100);
+        question = num1 + " + " + num2;
+    } else if (choice === 1) {
+        // -
+        var num1 = getRandomInt(2, 100);
+        var num2 = getRandomInt(2, 100);
+        question = (num1 + num2) + " - " + num1;
+    } else if (choice === 2) {
+        // *
+        var num1 = getRandomInt(2, 12);
+        var num2 = getRandomInt(2, 100);
+        question = num1 + " * " + num1;
+    } else if (choice === 3) {
+        // /
+        var num1 = getRandomInt(2, 12);
+        var num2 = getRandomInt(2, 100);
+        question = (num1 * num2) + " / " + num1;
+    }
     return question;
 }
 
@@ -26,6 +49,7 @@ function generate_questions(count) {
         var question = generate_question();
         questions.push(question);
     }
+    // console.log(questions);
     return questions;
 }
 
@@ -121,6 +145,7 @@ io.on("connection", function(socket) {
     });
 
     socket.on("update keyboard", function(keyboard) {
+        if (!(socket.id in players)) return;
         players[socket.id].text = keyboard["text"];
         players[socket.id].question = keyboard["question"];
         players[socket.id].score = keyboard["score"];
