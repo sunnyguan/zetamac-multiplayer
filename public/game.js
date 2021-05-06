@@ -116,9 +116,12 @@ socket.on("login", function(data) {
     init_names();
 });
 
+var opponentId = -1;
+
 socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     numPlayers = data.numPlayers;
+    opponentId = data.opponent;
     start();
 });
 
@@ -130,7 +133,7 @@ socket.on("player left", function(data) {
 socket.on("update positions", function(data) {
     players = data.players;
     Object.keys(players).forEach((key) => {
-        if (key != playerId) {
+        if (key === opponentId) {
             textbox2.value = players[key].text;
             question2.textContent = players[key].question;
             score2.textContent = players[key].score;

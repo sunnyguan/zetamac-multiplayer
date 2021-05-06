@@ -39,12 +39,14 @@ io.on('connection', function(socket) {
 
                 socket.broadcast.to(key).emit('match found', {
                     'player': players[socket.id],
-                    'numPlayers': numPlayers
+                    'numPlayers': numPlayers,
+                    'opponent': socket.id
                 });
 
                 socket.emit('match found', {
                     'player': players[key],
-                    'numPlayers': numPlayers
+                    'numPlayers': numPlayers,
+                    'opponent': key
                 });
 
                 done = true;
