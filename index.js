@@ -7,6 +7,33 @@ var port = process.env.PORT || 3000;
 var players = {};
 var online = 0;
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generate_question() {
+    var question = getRandomInt(0, 10) + " + " + getRandomInt(0, 10);
+    return question;
+}
+
+function generate_questions(count) {
+    var questions = [];
+    for (var i = 0; i < count; i++) {
+        var question = generate_question();
+        questions.push(question);
+    }
+    return questions;
+}
+
+function update_players() {
+    io.emit("new player", {
+        numPlayers: Object.keys(players).length,
+        numOnline: online
+    });
+}
+
 server.listen(port, function() {
     console.log("Server listening at port %d", port);
 });
@@ -15,13 +42,6 @@ app.use(express.static(__dirname + "/public"));
 
 io.on("connection", function(socket) {
     ++online;
-
-    function update_players() {
-        io.emit("new player", {
-            numPlayers: Object.keys(players).length,
-            numOnline: online
-        });
-    }
 
     socket.on("enter", function() {
         update_players();
@@ -47,15 +67,18 @@ io.on("connection", function(socket) {
             if (!done && key !== socket.id && players[key].opponent === "-1") {
                 players[socket.id].opponent = key;
                 players[key].opponent = socket.id;
+                questions = generate_questions(100);
 
                 socket.broadcast.to(key).emit("match found", {
                     player: players[socket.id],
                     opponent: socket.id,
+                    questions: questions
                 });
 
                 socket.emit("match found", {
                     player: players[key],
                     opponent: key,
+                    questions: questions
                 });
 
                 done = true;

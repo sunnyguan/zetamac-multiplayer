@@ -7,6 +7,8 @@ var players = {};
 var numPlayers = 0;
 var playerId;
 var playerName;
+var questions = [];
+var question_id = 0;
 
 /* Keyboard events */
 
@@ -35,7 +37,8 @@ function getRandomInt(min, max) {
 }
 
 function new_question() {
-    var question = getRandomInt(0, 10) + " + " + getRandomInt(0, 10);
+    // var question = getRandomInt(0, 10) + " + " + getRandomInt(0, 10);
+    var question = questions[question_id++];
     question1.textContent = question;
     keyboard["question"] = question;
     socket.emit("update keyboard", keyboard);
@@ -133,6 +136,7 @@ var opponentId = -1;
 socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     opponentId = data.opponent;
+    questions = data.questions;
     start();
 });
 
