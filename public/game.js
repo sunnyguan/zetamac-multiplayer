@@ -76,7 +76,7 @@ addEventListener(
 var banner = document.getElementById("banner");
 var game = document.getElementById("game");
 
-var cap = 30;
+var cap = 10;
 
 function init_names() {
     Object.keys(players).forEach((key) => {
@@ -98,6 +98,12 @@ socket.on("login", function(data) {
     playerId = data.playerId;
     players[playerId] = data.player;
     init_names();
+});
+
+var highScore = document.getElementById("high-score");
+
+socket.on("highScore", function(data) {
+    highScore.textContent = `High Score: ${data.score} by ${data.player}`;
 });
 
 var opponentId = -1;

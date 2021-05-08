@@ -6,7 +6,9 @@
   "author": "Sunny Guan",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^9.0.0",
     "express": "4.17.1",
+    "node-fetch": "^2.6.1",
     "socket.io": "4.0.1"
   },
   "scripts": {

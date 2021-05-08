@@ -1,3 +1,8 @@
+require('dotenv').config();
+
+const API_URL = process.env.API_URL;
+const fetch = require("node-fetch");
+
 var express = require("express");
 var app = express();
 var server = require("http").createServer(app);
@@ -6,7 +11,7 @@ var port = process.env.PORT || 3000;
 
 var players = {};
 var online = 0;
-var CAP = 30;
+var CAP = 10;
 
 var games = {};
 
@@ -50,7 +55,6 @@ function generate_questions(count) {
         var question = generate_question();
         questions.push(question);
     }
-    // console.log(questions);
     return questions;
 }
 
@@ -67,6 +71,17 @@ function update_games() {
     });
 }
 
+function game_end(game_data) {
+    console.log(game_data);
+    let encoded = new URLSearchParams(game_data).toString();
+    fetch(API_URL, {
+        method: "POST", 
+        body: JSON.stringify(game_data)
+    }).then(r => r.json()).then(res => {
+        console.log(res);
+    });
+}
+
 server.listen(port, function() {
     console.log("Server listening at port %d", port);
 });
@@ -78,6 +93,9 @@ io.on("connection", function(socket) {
 
     socket.on("enter", function() {
         update_players();
+        fetch(API_URL).then(r => r.json()).then(res => {
+            socket.emit("highScore", res);
+        });
     });
 
     socket.on("spectate", function(info) {
@@ -135,6 +153,13 @@ io.on("connection", function(socket) {
                 var time = CAP + 5;
                 var x = setInterval(function() {
                     if (time <= 0) {
+                        game_end({
+                            'gameId': `${key}:${socket.id}:${new Date().getTime()}`,
+                            'player1': players[socket.id].name,
+                            'player2': players[key].name,
+                            'score1': parseInt(players[socket.id].score),
+                            'score2': parseInt(players[key].score)
+                        });
                         clearInterval(x);
                     }
                     socket.emit("tick", { time: time });
