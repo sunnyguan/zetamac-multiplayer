@@ -11,7 +11,7 @@ var port = process.env.PORT || 3000;
 
 var players = {};
 var online = 0;
-var CAP = 30;
+var CAP = 1;
 
 var games = {};
 
@@ -72,11 +72,11 @@ function update_games() {
 }
 
 function game_end(game_data) {
-    console.log(game_data);
+    console.log(JSON.stringify(game_data));
     let encoded = new URLSearchParams(game_data).toString();
     fetch(API_URL, {
-        method: "POST", 
-        body: JSON.stringify(game_data)
+        method: "POST",
+        body: JSON.stringify(game_data),
     }).then(r => r.json()).then(res => {
         console.log(res);
     });

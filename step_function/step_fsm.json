@@ -1,0 +1,41 @@
+{
+  "Comment": "Zetamac Processor State Machine",
+  "StartAt": "save",
+  "States": {
+    "save": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-2:477613501779:function:saveGame",
+      "Next": "highScoreProcessor"
+    },
+    "highScoreProcessor": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-2:477613501779:function:highScoreProcessor",
+      "Next": "scoreUpdateChoice"
+    },
+    "scoreUpdateChoice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.update",
+          "BooleanEquals": true,
+          "Next": "updateHighScore"
+        },
+        {
+          "Variable": "$.update",
+          "BooleanEquals": false,
+          "Next": "generateResponse"
+        }
+      ]
+    },
+    "updateHighScore": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-2:477613501779:function:updateHighScore",
+      "Next": "generateResponse"
+    },
+    "generateResponse": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-2:477613501779:function:generateResponse",
+      "End": true
+    }
+  }
+}
