@@ -10,12 +10,13 @@
     />
   </head>
   <body class="text-gray-700 flex">
-    <div class="h-screen w-72 bg-blue-100 p-4 hidden sm:flex flex-col justify-between">
+    <div
+      class="h-screen w-72 bg-blue-100 p-4 hidden sm:flex flex-col justify-between"
+    >
       <div class="text-xl text-bold text-center mb-4">Spectate</div>
       <div class="grid grid-cols-1 gap-4 mb-auto" id="games"></div>
       <div class="text-center">
-        <div id="high-score">
-        </div>
+        <div id="high-score"></div>
       </div>
     </div>
     <div id="parent" class="flex flex-col h-screen w-full">
@@ -68,6 +69,7 @@
         </div>
       </div>
     </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
   </body>

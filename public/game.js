@@ -26,6 +26,31 @@ var score2 = document.getElementById("score2");
 var name1 = document.getElementById("name1");
 var name2 = document.getElementById("name2");
 
+if (annyang) {
+    function digitRead(input) {
+        if (textbox1.readOnly) {
+            console.log("game has not been started yet!");
+        } else {
+            var lower = input.toLowerCase().replaceAll(" ", "");
+            textbox1.value += lower;
+            inputEvent({});
+        }
+    }
+    var commands = {
+        ":digit": {
+            regexp: /^((?:(?:\d) *)+)$/,
+            callback: digitRead,
+        },
+        no: function() {
+            textbox1.value = "";
+        },
+    };
+    // annyang.debug(true);
+    annyang.addCommands(commands);
+    annyang.start();
+    console.log("commands loaded");
+}
+
 addEventListener("keydown", function(event) {
     if (event.keyCode == 13) {
         if (!playerName) startConnection();
@@ -61,17 +86,15 @@ function check() {
     }
 }
 
-addEventListener(
-    "input",
-    function(event) {
-        if (playerName) {
-            check();
-            keyboard["text"] = textbox1.value;
-            socket.emit("update keyboard", keyboard);
-        }
-    },
-    false
-);
+function inputEvent(e) {
+    if (playerName) {
+        check();
+        keyboard["text"] = textbox1.value;
+        socket.emit("update keyboard", keyboard);
+    }
+}
+
+addEventListener("input", inputEvent, false);
 
 var banner = document.getElementById("banner");
 var game = document.getElementById("game");
@@ -175,16 +198,17 @@ socket.on("tick", function(data) {
         banner.textContent = "GO!";
     } else if (time == cap) {
         banner.textContent = time + "";
-        if (spectating !== 1)
-            textbox1.readOnly = false;
+        if (spectating !== 1) textbox1.readOnly = false;
         new_question();
     } else if (time <= 0) {
         var final_score1 = parseInt(score1.textContent);
         var final_score2 = parseInt(score2.textContent);
         if (final_score1 < final_score2) {
-            banner.textContent = name2.textContent + " won! (refresh to start new game)";
+            banner.textContent =
+                name2.textContent + " won! (refresh to start new game)";
         } else if (final_score1 > final_score2) {
-            banner.textContent = name1.textContent + " won! (refresh to start new game)";
+            banner.textContent =
+                name1.textContent + " won! (refresh to start new game)";
         } else {
             banner.textContent = "Tied game! (refresh to start new game)";
         }
