@@ -26,16 +26,21 @@ var score2 = document.getElementById("score2");
 var name1 = document.getElementById("name1");
 var name2 = document.getElementById("name2");
 
-if (annyang) {
-    function digitRead(input) {
-        if (textbox1.readOnly) {
-            console.log("game has not been started yet!");
-        } else {
-            var lower = input.toLowerCase().replaceAll(" ", "");
-            textbox1.value += lower;
-            inputEvent({});
-        }
+var speech_button = document.getElementById("enable-speech");
+
+var speech = 0;
+
+function digitRead(input) {
+    if (textbox1.readOnly) {
+        console.log("game has not been started yet!");
+    } else {
+        var lower = input.toLowerCase().replaceAll(" ", "");
+        textbox1.value += lower;
+        inputEvent({});
     }
+}
+
+function start_speech() {
     var commands = {
         ":digit": {
             regexp: /^((?:(?:\d) *)+)$/,
@@ -48,7 +53,21 @@ if (annyang) {
     // annyang.debug(true);
     annyang.addCommands(commands);
     annyang.start();
-    console.log("commands loaded");
+}
+
+function enable_speech() {
+    if (annyang) {
+        if (speech === 1) {
+            annyang.abort();
+            speech = -1;
+            speech_button.textContent = "Enable Speech";
+        } else {
+            start_speech();
+            speech = 1;
+            speech_button.textContent = "Disable Speech";
+        }
+    }
+    console.log(speech);
 }
 
 addEventListener("keydown", function(event) {
