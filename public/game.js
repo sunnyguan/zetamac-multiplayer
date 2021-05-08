@@ -76,7 +76,7 @@ addEventListener(
 var banner = document.getElementById("banner");
 var game = document.getElementById("game");
 
-var cap = 10;
+var cap = 30;
 
 function init_names() {
     Object.keys(players).forEach((key) => {
@@ -97,6 +97,7 @@ function start() {
 socket.on("login", function(data) {
     playerId = data.playerId;
     players[playerId] = data.player;
+    cap = data.cap;
     init_names();
 });
 

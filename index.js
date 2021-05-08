@@ -11,7 +11,7 @@ var port = process.env.PORT || 3000;
 
 var players = {};
 var online = 0;
-var CAP = 10;
+var CAP = 30;
 
 var games = {};
 
@@ -120,6 +120,7 @@ io.on("connection", function(socket) {
         socket.emit("login", {
             playerId: socket.id,
             player: players[socket.id],
+            cap: CAP
         });
 
         var done = false;
