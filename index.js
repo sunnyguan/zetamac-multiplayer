@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./utils')();
 
 const API_URL = process.env.API_URL;
 const fetch = require("node-fetch");
@@ -10,53 +11,10 @@ var io = require("socket.io")(server);
 var port = process.env.PORT || 3000;
 
 var players = {};
-var online = 0;
-var CAP = 30;
-
 var games = {};
+var online = 0;
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function generate_question() {
-    var choice = getRandomInt(0, 3);
-
-    var question = "";
-    if (choice === 0) {
-        // +
-        var num1 = getRandomInt(2, 100);
-        var num2 = getRandomInt(2, 100);
-        question = num1 + " + " + num2;
-    } else if (choice === 1) {
-        // -
-        var num1 = getRandomInt(2, 100);
-        var num2 = getRandomInt(2, 100);
-        question = (num1 + num2) + " - " + num1;
-    } else if (choice === 2) {
-        // *
-        var num1 = getRandomInt(2, 12);
-        var num2 = getRandomInt(2, 100);
-        question = num1 + " * " + num1;
-    } else if (choice === 3) {
-        // /
-        var num1 = getRandomInt(2, 12);
-        var num2 = getRandomInt(2, 100);
-        question = (num1 * num2) + " / " + num1;
-    }
-    return question;
-}
-
-function generate_questions(count) {
-    var questions = [];
-    for (var i = 0; i < count; i++) {
-        var question = generate_question();
-        questions.push(question);
-    }
-    return questions;
-}
+var CAP = 30;
 
 function update_players() {
     io.emit("new player", {
@@ -72,8 +30,6 @@ function update_games() {
 }
 
 function game_end(game_data) {
-    console.log(JSON.stringify(game_data));
-    let encoded = new URLSearchParams(game_data).toString();
     fetch(API_URL, {
         method: "POST",
         body: JSON.stringify(game_data)
@@ -103,7 +59,7 @@ io.on("connection", function(socket) {
         if (id in games) {
             games[id].spectators.push(socket.id);
         } else {
-            // game does not exist!
+            console.error("Game does not exist!");
         }
     });
 
@@ -117,6 +73,7 @@ io.on("connection", function(socket) {
             opponent: "-1",
         };
         update_players();
+
         socket.emit("login", {
             playerId: socket.id,
             player: players[socket.id],
@@ -126,9 +83,11 @@ io.on("connection", function(socket) {
         var done = false;
         Object.keys(players).forEach((key) => {
             if (!done && key !== socket.id && players[key].opponent === "-1") {
+                // found a match between player "key" and "socket.id"
                 players[socket.id].opponent = key;
                 players[key].opponent = socket.id;
-                questions = generate_questions(100);
+
+                questions = generate_questions(CAP * 3);
 
                 games[key] = {
                     name1: name,
@@ -136,7 +95,6 @@ io.on("connection", function(socket) {
                     id2: socket.id,
                     spectators: []
                 };
-
                 update_games();
 
                 socket.broadcast.to(key).emit("match found", {
@@ -165,11 +123,14 @@ io.on("connection", function(socket) {
                     }
                     socket.emit("tick", { time: time });
                     socket.broadcast.to(key).emit("tick", { time: time });
+
+                    // update to spectators as well
                     if (key in games) {
                         games[key].spectators.forEach(spectator => {
                             socket.broadcast.to(spectator).emit("tick", { time: time });
                         });
                     }
+
                     time--;
                 }, 1000);
 
@@ -179,7 +140,8 @@ io.on("connection", function(socket) {
     });
 
     function disconnect() {
-        delete games[socket.id];
+        if (socket.id in games)
+            delete games[socket.id];
         if (players[socket.id])
             delete games[players[socket.id].opponent];
         update_games();

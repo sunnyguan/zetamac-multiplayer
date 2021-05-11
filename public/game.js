@@ -1,19 +1,26 @@
-var socket = io();
+const socket = io();
 socket.emit("enter");
 
+// player state
 var keyboard = { text: "", question: "", score: "0" };
 
+// game information
 var players = {};
 var numPlayers = 0;
 var playerId;
 var playerName;
 var questions = [];
 var question_id = 0;
-
 var games = {};
+var cap = 30;
+var opponentId = -1;
 
-/* Keyboard events */
+// spectating info
+var spectating = 0;
+var spec_id1 = -1;
+var spec_id2 = -1;
 
+// DOM elements
 var question1 = document.getElementById("question1");
 var question2 = document.getElementById("question2");
 
@@ -27,8 +34,14 @@ var name1 = document.getElementById("name1");
 var name2 = document.getElementById("name2");
 
 var speech_button = document.getElementById("enable-speech");
-
 var speech = 0;
+
+var banner = document.getElementById("banner");
+var game = document.getElementById("game");
+
+var online_counter = document.getElementById("online");
+var list_games = document.getElementById("games");
+var highScore = document.getElementById("high-score");
 
 function digitRead(input) {
     if (textbox1.readOnly) {
@@ -76,14 +89,7 @@ addEventListener("keydown", function(event) {
     }
 });
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function new_question() {
-    // var question = getRandomInt(0, 10) + " + " + getRandomInt(0, 10);
     var question = questions[question_id++];
     question1.textContent = question;
     keyboard["question"] = question;
@@ -115,10 +121,6 @@ function inputEvent(e) {
 
 addEventListener("input", inputEvent, false);
 
-var banner = document.getElementById("banner");
-var game = document.getElementById("game");
-
-var cap = 30;
 
 function init_names() {
     Object.keys(players).forEach((key) => {
@@ -130,12 +132,7 @@ function init_names() {
     });
 }
 
-function start() {
-    init_names();
-}
-
-/* Socket events */
-
+// socket events
 socket.on("login", function(data) {
     playerId = data.playerId;
     players[playerId] = data.player;
@@ -143,13 +140,11 @@ socket.on("login", function(data) {
     init_names();
 });
 
-var highScore = document.getElementById("high-score");
 
 socket.on("highScore", function(data) {
     highScore.textContent = `High Score: ${data.score} by ${data.player}`;
 });
 
-var opponentId = -1;
 
 socket.on("match found", function(data) {
     players[data.player.id] = data.player;
@@ -157,10 +152,9 @@ socket.on("match found", function(data) {
     questions = data.questions;
     document.getElementById("wait").textContent = " score:";
     score1.textContent = "0";
-    start();
+    init_names();
 });
 
-var list_games = document.getElementById("games");
 
 function createElementFromHTML(htmlString) {
     var div = document.createElement("div");
@@ -168,9 +162,6 @@ function createElementFromHTML(htmlString) {
     return div.firstChild;
 }
 
-var spectating = 0;
-var spec_id1 = -1;
-var spec_id2 = -1;
 
 function spectate(id, id2) {
     if (spectating === 0) {
@@ -197,7 +188,6 @@ socket.on("update games", function(data) {
     });
 });
 
-var online_counter = document.getElementById("online");
 
 function update_online(count) {
     numPlayers = count.numPlayers;
@@ -281,9 +271,8 @@ var startConnection = function() {
     }
 };
 
-var startSpectating = function() {
-    var startEl = document.getElementById("start");
-    var playerEl = document.getElementById("player");
+const startSpectating = function() {
+    const startEl = document.getElementById("start");
     document.getElementById("parent").removeChild(startEl);
     game.style.display = "block";
 };
