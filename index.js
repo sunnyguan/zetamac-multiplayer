@@ -49,6 +49,7 @@ io.on("connection", function(socket) {
 
     socket.on("enter", function() {
         update_players();
+        update_games();
         fetch(API_URL).then(r => r.json()).then(res => {
             socket.emit("highScore", res);
         });
