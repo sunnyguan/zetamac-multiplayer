@@ -180,7 +180,7 @@ socket.on("update games", function(data) {
     Object.keys(games).forEach((id) => {
         var info = games[id];
         var element = createElementFromHTML(`
-            <div class="bg-blue-200 shadow-md rounded-xl p-2 text-center" onclick="spectate('${id}', '${info.id2}')">
+            <div class="bg-blue-200 shadow-md rounded-xl p-2 text-center cursor-pointer hover:bg-blue-300" onclick="spectate('${id}', '${info.id2}')">
                 ${info.name1} vs ${info.name2}
             </div>
             `);
