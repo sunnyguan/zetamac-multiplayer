@@ -15,7 +15,7 @@
     >
       <div class="text-xl text-bold text-center mb-4">Spectate</div>
       <div class="grid grid-cols-1 gap-4 mb-auto" id="games"></div>
-      <div class="button mx-auto px-4 py-2 mb-2 bg-blue-200 rounded-md shadow-sm cursor-pointer" onclick="enable_speech()" id="enable-speech">
+      <div class="button mx-auto px-4 py-2 mb-2 bg-blue-200 rounded-md shadow-sm cursor-pointer hover:bg-blue-300" onclick="enable_speech()" id="enable-speech">
           Enable Speech
       </div>
       <div class="text-center">
@@ -24,7 +24,7 @@
     </div>
     <div id="parent" class="flex flex-col h-screen w-full">
       <div class="w-full bg-indigo-100 p-4 pl-8 flex">
-        <div class="text-left text-xl font-bold flex-grow">Zetamac</div>
+        <div class="text-left text-xl font-bold flex-grow">Zetamac Multiplayer</div>
         <div class="text-right my-auto" id="online">0</div>
       </div>
       <div id="start" class="flex flex-grow">
@@ -66,6 +66,7 @@
             <input
               id="text2"
               readonly
+              type="password"
               class="border-red-600 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2"
             />
           </div>

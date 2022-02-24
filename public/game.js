@@ -275,4 +275,5 @@ const startSpectating = function() {
     const startEl = document.getElementById("start");
     document.getElementById("parent").removeChild(startEl);
     game.style.display = "block";
+    textbox2.type = "text";
 };

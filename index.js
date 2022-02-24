@@ -59,6 +59,9 @@ io.on("connection", function(socket) {
         var id = info.id;
         if (id in games) {
             games[id].spectators.push(socket.id);
+            socket.emit("update positions", {
+                players: players,
+            });
         } else {
             console.error("Game does not exist!");
         }
@@ -113,13 +116,15 @@ io.on("connection", function(socket) {
                 var time = CAP + 5;
                 var x = setInterval(function() {
                     if (time <= 0) {
-                        game_end({
-                            'gameId': `${key}:${socket.id}:${new Date().getTime()}`,
-                            'player1': players[socket.id].name,
-                            'player2': players[key].name,
-                            'score1': parseInt(players[socket.id].score),
-                            'score2': parseInt(players[key].score)
-                        });
+                        if (players.has(socket.id) && players.has(key)) {
+                            game_end({
+                                'gameId': `${key}:${socket.id}:${new Date().getTime()}`,
+                                'player1': players[socket.id].name,
+                                'player2': players[key].name,
+                                'score1': parseInt(players[socket.id].score),
+                                'score2': parseInt(players[key].score)
+                            });
+                        }
                         clearInterval(x);
                     }
                     socket.emit("tick", { time: time });
@@ -152,8 +157,8 @@ io.on("connection", function(socket) {
     }
 
     socket.on("disconnect", function() {
-        disconnect();
         --online;
+        disconnect();
     });
 
     socket.on("game end", function() {
