@@ -43,6 +43,49 @@ var online_counter = document.getElementById("online");
 var list_games = document.getElementById("games");
 var highScore = document.getElementById("high-score");
 
+////
+
+const labels = [];
+
+for (let i = 0; i <= cap; i++) {
+    labels.push(i);
+}
+
+var data = {
+    labels: labels,
+    datasets: [
+        {
+            label: "Player 1",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            data: Array(cap).fill(null),
+        },
+        {
+            label: "Player 2",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(192,75,192,0.4)",
+            borderColor: "rgba(192,75,192,1)",
+            data: Array(cap).fill(null),
+        }
+    ]
+};
+
+const config = {
+    type: 'line',
+    data: data,
+    options: {showLines: true}
+};
+
+const myChart = new Chart(
+    document.getElementById('graph'),
+    config
+);
+
+////
+
 function digitRead(input) {
     if (textbox1.readOnly) {
         console.log("game has not been started yet!");
@@ -199,13 +242,21 @@ socket.on("new player", function(data) {
     update_online(data);
 });
 
+let time = 0;
+
 socket.on("tick", function(data) {
-    var time = data.time;
+    time = data.time;
+    if (cap - time !== 0) {
+        for (let i = 0; i < 2; i++) {
+            myChart.data.datasets[i].data[cap - time] = myChart.data.datasets[i].data[cap - time - 1];
+        }
+        myChart.update();
+    }
     if (time >= cap + 2) {
         banner.textContent = time - cap - 1 + "..";
-    } else if (time == cap + 1) {
+    } else if (time === cap + 1) {
         banner.textContent = "GO!";
-    } else if (time == cap) {
+    } else if (time === cap) {
         banner.textContent = time + "";
         if (spectating !== 1) textbox1.readOnly = false;
         new_question();
@@ -240,21 +291,38 @@ socket.on("update positions", function(data) {
                 textbox1.value = players[key].text;
                 question1.textContent = players[key].question;
                 score1.textContent = players[key].score;
+                addPoint(0, players[key].score);
             } else if (key === spec_id2) {
                 name2.textContent = players[spec_id2].name;
                 textbox2.value = players[key].text;
                 question2.textContent = players[key].question;
                 score2.textContent = players[key].score;
+                addPoint(1, players[key].score);
             }
         } else {
             if (key === opponentId) {
                 textbox2.value = players[key].text;
                 question2.textContent = players[key].question;
                 score2.textContent = players[key].score;
+                addPoint(1, players[key].score);
+            } else if (key === playerId) {
+                addPoint(0, players[key].score);
             }
         }
     });
 });
+
+let updatedLabels = false;
+
+function addPoint(pid, point) {
+    if (!updatedLabels) {
+        myChart.data.datasets[0].label = name1.textContent;
+        myChart.data.datasets[1].label = name2.textContent;
+        updatedLabels = true;
+    }
+    myChart.data.datasets[pid].data[cap - time] = point;
+    myChart.update();
+}
 
 /* Start connection */
 

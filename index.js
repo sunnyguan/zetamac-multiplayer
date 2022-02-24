@@ -116,7 +116,7 @@ io.on("connection", function(socket) {
                 var time = CAP + 5;
                 var x = setInterval(function() {
                     if (time <= 0) {
-                        if (players.has(socket.id) && players.has(key)) {
+                        if (socket.id in players && key in players) {
                             game_end({
                                 'gameId': `${key}:${socket.id}:${new Date().getTime()}`,
                                 'player1': players[socket.id].name,
