@@ -196,7 +196,6 @@ socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     opponentId = data.opponent;
     questions = data.questions;
-    document.getElementById("wait").textContent = " score:";
     score1.textContent = "0";
     init_names();
 });
@@ -286,7 +285,6 @@ socket.on("tick", function(data) {
 socket.on("update positions", function(data) {
     players = data.players;
 
-    document.getElementById("wait").textContent = ":";
     Object.keys(players).forEach((key) => {
         if (spectating === 1) {
             if (key === spec_id1) {

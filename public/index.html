@@ -10,71 +10,96 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
-  <body class="text-gray-700 flex">
-    <div
-      class="h-screen w-72 bg-blue-100 p-4 hidden sm:flex flex-col justify-between"
-    >
-      <div class="text-xl text-bold text-center mb-4">Spectate</div>
-      <div class="grid grid-cols-1 gap-4 mb-auto" id="games"></div>
-      <div class="button mx-auto px-4 py-2 mb-2 bg-blue-200 rounded-md shadow-sm cursor-pointer hover:bg-blue-300" onclick="enable_speech()" id="enable-speech">
-          Enable Speech
+  <body class="text-gray-700 h-screen flex flex-col">
+    <div class="w-full bg-indigo-300 px-8 py-4 flex shadow-lg">
+      <div class="text-left text-2xl font-light flex-grow">Zetamac Multiplayer</div>
+      <div class="text-right my-auto" id="online">0</div>
+    </div>
+    <div class="flex flex-grow">
+      <div
+        class="w-72 bg-blue-100 p-4 hidden sm:flex flex-col justify-between"
+      >
+        <div class="text-xl mb-4 text-center">Spectate</div>
+        <div class="grid grid-cols-1 gap-4 mb-auto" id="games"></div>
+        <div class="button mx-auto px-4 py-2 mb-2 bg-blue-200 rounded-md shadow-sm cursor-pointer hover:bg-blue-300" onclick="enable_speech()" id="enable-speech">
+            Enable Speech
+        </div>
+        <div class="text-center">
+          <div id="high-score"></div>
+        </div>
       </div>
-      <div class="text-center">
-        <div id="high-score"></div>
+      <div id="parent" class="flex flex-col w-full">
+        <div id="start" class="flex flex-grow">
+          <div class="m-auto">
+            <input
+              id="player"
+              class="border-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
+              placeholder="Your name here"
+            />
+          </div>
+        </div>
+        <div>
+          <div id="game" class="hidden w-full flex flex-grow">
+            <div id="banner" class="bg-red-100 text-3xl text-center py-4 mb-4 text-bold">
+              Waiting for opponent...
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div id="mine" class="flex mx-auto flex-col w-48">
+                <div class="mb-4 flex flex-col text-center text-3xl text-light w-full bg-blue-200 rounded-lg py-2 px-4">
+                  <div id="name1" class=""></div>
+                  <div id="score1" class="text-7xl font-bold">0</div>
+                </div>
+
+                <div class="flex flex-row">
+                  <div class="flex flex-grow mr-4 my-auto text-2xl">
+                    <div id="question1">? + ?</div>
+                    <span class="ml-2">=</span>
+                  </div>
+                  <input
+                    id="text1"
+                    readonly
+                    class="flex-grow w-16 border-blue-400 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
+                  />
+                </div>
+              </div>
+              <div id="theirs" class="flex mx-auto flex-col w-48">
+                <div class="mb-4 flex flex-col text-center text-3xl text-light w-full bg-blue-200 rounded-lg py-2 px-4">
+                  <div id="name2" class="">Waiting...</div>
+                  <div id="score2" class="text-7xl font-bold">0</div>
+                </div>
+
+                <div class="flex flex-row">
+                  <div class="flex mr-4 my-auto text-2xl">
+                    <div id="question2">? + ?</div>
+                    <span class="ml-2">=</span>
+                  </div>
+                  <input
+                          id="text2"
+                          readonly
+                          class="flex-grow w-16 border-red-400 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="mt-8 mx-auto w-2/3">
+              <canvas id="graph"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="parent" class="flex flex-col h-screen w-full">
-      <div class="w-full bg-indigo-100 p-4 pl-8 flex">
-        <div class="text-left text-xl font-bold flex-grow">Zetamac Multiplayer</div>
-        <div class="text-right my-auto" id="online">0</div>
+    <div class="bg-indigo-300 w-full px-4 py-2 text-center grid grid-cols-3">
+      <div>
+        Created by
+        <a href="https://www.linkedin.com/in/sunny-guan/" target="_blank" class="underline text-blue-700">Sunny Guan</a>
       </div>
-      <div id="start" class="flex flex-grow">
-        <div class="m-auto">
-          <input
-            id="player"
-            class="border-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
-            placeholder="Your name here"
-          />
-        </div>
+      <div>
+        View project on
+        <a href="https://github.com/sunnyguan/zetamac-multiplayer" target="_blank" class="underline text-blue-700">GitHub</a>
       </div>
-      <div id="game" class="hidden w-full flex flex-grow">
-        <div id="banner" class="h-8 text-3xl text-center my-4 text-bold"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div id="mine" class="flex mx-auto flex-col">
-            <div class="flex mx-auto">
-              <div class="h-8 text-2xl mb-8 mr-4 text-bold">
-                <span id="name1"></span> :
-                <span id="score1" class="">0</span>
-              </div>
-            </div>
-
-            <div id="question1" class="h-8 flex mx-auto text-2xl mb-4"></div>
-            <input
-              id="text1"
-              readonly
-              class="border-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
-            />
-          </div>
-          <div id="theirs" class="flex mx-auto flex-col">
-            <div class="flex mx-auto">
-              <div class="h-8 text-2xl mb-8 mr-4 text-bold">
-                <span id="name2"></span
-                ><span id="wait">Waiting for opponent...</span>
-                <span id="score2" class=""></span>
-              </div>
-            </div>
-            <div id="question2" class="h-8 flex mx-auto text-2xl mb-4"></div>
-            <input
-              id="text2"
-              readonly
-              type="password"
-              class="border-red-600 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2"
-            />
-          </div>
-        </div>
-        <div class="mt-8 mx-auto w-2/3">
-          <canvas id="graph"></canvas>
-        </div>
+      <div>
+        Play single-player
+        <a href="https://arithmetic.zetamac.com/" target="_blank" class="underline text-blue-700">Zetamac</a>
       </div>
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
