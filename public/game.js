@@ -76,7 +76,10 @@ var data = {
 const config = {
     type: 'line',
     data: data,
-    options: {showLines: true}
+    options: {
+        showLines: true,
+        responsive: true
+    }
 };
 
 const myChart = new Chart(
