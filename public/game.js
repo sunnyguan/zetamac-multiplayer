@@ -302,7 +302,7 @@ socket.on("update positions", function(data) {
             }
         } else {
             if (key === opponentId) {
-                textbox2.value = players[key].text;
+                textbox2.value = "*".repeat((players[key].text).length);
                 question2.textContent = players[key].question;
                 score2.textContent = players[key].score;
                 addPoint(1, players[key].score);
