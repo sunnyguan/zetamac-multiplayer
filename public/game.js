@@ -60,6 +60,7 @@ var startGame = function() {
     myChart.data.datasets[1].data = Array(cap).fill(null);
     myChart.update();
     players = {};
+    question_id = 0;
     keyboard = { text: "", question: "", score: "0" };
     updatedLabels = false;
         // myChart.destroy();
