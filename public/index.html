@@ -43,8 +43,11 @@
         </div>
         <div>
           <div id="game" class="hidden w-full flex flex-grow">
-            <div id="banner" class="bg-red-100 text-3xl text-center py-4 mb-4 text-bold">
-              Waiting for opponent...
+            <div class="flex bg-red-100 text-3xl text-center py-4 mb-4 text-bold place-items-center justify-center">
+              <div id="banner">
+                Waiting for opponent...
+              </div>
+              <button id="new-game" class="hidden bg-red-300 px-4 py-2 ml-4 rounded-xl hover:bg-red-400 shadow-md" onclick="startGame()">New Game</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div id="mine" class="flex mx-auto flex-col w-48">

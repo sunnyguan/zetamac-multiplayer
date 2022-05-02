@@ -38,12 +38,37 @@ var speech = 0;
 
 var banner = document.getElementById("banner");
 var game = document.getElementById("game");
+var newGame = document.getElementById("new-game");
 
 var online_counter = document.getElementById("online");
 var list_games = document.getElementById("games");
 var highScore = document.getElementById("high-score");
 
 ////
+
+var startGame = function() {
+    newGame.style.display = "none";
+    textbox1.value = "";
+    textbox2.value = "";
+    name2.textContent = "Waiting...";
+    question1.textContent = "? + ?";
+    question2.textContent = "? + ?";
+    banner.textContent = "Waiting for opponent...";
+    score1.textContent = "0";
+    score2.textContent = "0";
+    myChart.data.datasets[0].data = Array(cap).fill(null);
+    myChart.data.datasets[1].data = Array(cap).fill(null);
+    myChart.update();
+    players = {};
+    keyboard = { text: "", question: "", score: "0" };
+    updatedLabels = false;
+        // myChart.destroy();
+    // myChart = new Chart(
+    //     document.getElementById('graph'),
+    //     config
+    // );
+    socket.emit("add player", lastName);
+}
 
 const labels = [];
 
@@ -73,7 +98,7 @@ var data = {
     ]
 };
 
-const config = {
+let config = {
     type: 'line',
     data: data,
     options: {
@@ -82,7 +107,7 @@ const config = {
     }
 };
 
-const myChart = new Chart(
+let myChart = new Chart(
     document.getElementById('graph'),
     config
 );
@@ -130,7 +155,7 @@ function enable_speech() {
 }
 
 addEventListener("keydown", function(event) {
-    if (event.keyCode == 13) {
+    if (event.keyCode === 13) {
         if (!playerName) startConnection();
     }
 });
@@ -170,7 +195,7 @@ addEventListener("input", inputEvent, false);
 
 function init_names() {
     Object.keys(players).forEach((key) => {
-        if (key == playerId) {
+        if (key === playerId) {
             name1.textContent = players[key].name;
         } else {
             name2.textContent = players[key].name;
@@ -267,15 +292,16 @@ socket.on("tick", function(data) {
         var final_score2 = parseInt(score2.textContent);
         if (final_score1 < final_score2) {
             banner.textContent =
-                name2.textContent + " won! (refresh to start new game)";
+                name2.textContent + " won!";
         } else if (final_score1 > final_score2) {
             banner.textContent =
-                name1.textContent + " won! (refresh to start new game)";
+                name1.textContent + " won!";
         } else {
-            banner.textContent = "Tied game! (refresh to start new game)";
+            banner.textContent = "Tied game!";
         }
 
         textbox1.readOnly = true;
+        newGame.style.display = "block";
         socket.emit("game end");
     } else {
         banner.textContent = time + "";
@@ -327,6 +353,8 @@ function addPoint(pid, point) {
 
 /* Start connection */
 
+var lastName = "guest";
+
 var startConnection = function() {
     spectating = -1; // disable spectating
 
@@ -337,6 +365,7 @@ var startConnection = function() {
         document.getElementById("parent").removeChild(startEl);
         game.style.display = "block";
         socket.emit("add player", playerName);
+        lastName = playerName;
     }
 };
 

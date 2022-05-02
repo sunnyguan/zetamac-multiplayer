@@ -34,7 +34,7 @@ function game_end(game_data) {
         method: "POST",
         body: JSON.stringify(game_data)
     }).then(r => r.json()).then(res => {
-        console.log(res);
+        // console.log(res);
     });
 }
 
