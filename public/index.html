@@ -33,6 +33,7 @@
           <div class="m-auto">
             <input
               id="player"
+              type="number"
               class="border-blue-400 mr-4 py-2 px-4 bg-white rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none border-2 focus:border-blue-600"
               placeholder="Your name here"
             />
@@ -90,8 +91,6 @@
             <div class="mt-8 mx-auto w-2/3">
               <canvas id="graph"></canvas>
             </div>
-            <div id="numpad" class="grid grid-cols-3 md:hidden justify-center place-items-center border-2 border-blue-200">
-            </div>
           </div>
         </div>
       </div>
@@ -113,39 +112,5 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
-    <script>
-      function createElementFromHTML(htmlString) {
-        var div = document.createElement('div');
-        div.innerHTML = htmlString.trim();
-
-        // Change this to div.childNodes to support multiple top-level nodes.
-        return div.firstChild;
-      }
-
-      function updateTextbox1(val) {
-        if (!textbox1.readOnly) {
-          textbox1.value += val;
-          inputEvent(val);
-        }
-      }
-
-      function popTextbox1() {
-        let curval = textbox1.value;
-        if (!textbox1.readOnly && curval.length > 0) {
-          textbox1.value = curval.substr(0, curval.length - 1);
-        }
-      }
-
-      let numpad = document.querySelector("#numpad");
-
-      const className = "border-2 border-blue-200 text-center w-full p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer";
-
-      for (let i = 1; i <= 9; i++) {
-        numpad.appendChild(createElementFromHTML(`<div class="${className}" onClick="updateTextbox1(${i})">${i}</div>`));
-      }
-
-      numpad.appendChild(createElementFromHTML(`<div class="${className}" onClick="updateTextbox1(0)">0</div>`));
-      numpad.appendChild(createElementFromHTML(`<div class='col-span-2 ${className}' onClick="popTextbox1()">Backspace</div>`));
-    </script>
   </body>
 </html>
