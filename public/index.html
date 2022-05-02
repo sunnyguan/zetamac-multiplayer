@@ -12,7 +12,7 @@
   </head>
   <body class="text-gray-700 h-screen flex flex-col">
     <div class="w-full bg-indigo-300 px-8 py-4 flex shadow-lg">
-      <div class="text-left text-2xl font-light flex-grow">Zetamac Multiplayer</div>
+      <div class="text-left text-xl md:text-2xl font-light flex-grow">Zetamac Multiplayer</div>
       <div class="text-right my-auto" id="online">0</div>
     </div>
     <div class="flex flex-grow">
@@ -49,7 +49,7 @@
               </div>
               <button id="new-game" class="hidden bg-red-300 px-4 py-2 ml-4 rounded-xl hover:bg-red-400 shadow-md" onclick="startGame()">New Game</button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-8">
               <div id="mine" class="flex mx-auto flex-col w-48">
                 <div class="mb-4 flex flex-col text-center text-3xl text-light w-full bg-blue-200 rounded-lg py-2 px-4">
                   <div id="name1" class=""></div>
@@ -90,6 +90,8 @@
             <div class="mt-8 mx-auto w-2/3">
               <canvas id="graph"></canvas>
             </div>
+            <div id="numpad" class="grid grid-cols-3 md:hidden justify-center place-items-center border-2 border-blue-200">
+            </div>
           </div>
         </div>
       </div>
@@ -111,5 +113,39 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/game.js"></script>
+    <script>
+      function createElementFromHTML(htmlString) {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+
+        // Change this to div.childNodes to support multiple top-level nodes.
+        return div.firstChild;
+      }
+
+      function updateTextbox1(val) {
+        if (!textbox1.readOnly) {
+          textbox1.value += val;
+          inputEvent(val);
+        }
+      }
+
+      function popTextbox1() {
+        let curval = textbox1.value;
+        if (!textbox1.readOnly && curval.length > 0) {
+          textbox1.value = curval.substr(0, curval.length - 1);
+        }
+      }
+
+      let numpad = document.querySelector("#numpad");
+
+      const className = "border-2 border-blue-200 text-center w-full p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer";
+
+      for (let i = 1; i <= 9; i++) {
+        numpad.appendChild(createElementFromHTML(`<div class="${className}" onClick="updateTextbox1(${i})">${i}</div>`));
+      }
+
+      numpad.appendChild(createElementFromHTML(`<div class="${className}" onClick="updateTextbox1(0)">0</div>`));
+      numpad.appendChild(createElementFromHTML(`<div class='col-span-2 ${className}' onClick="popTextbox1()">Backspace</div>`));
+    </script>
   </body>
 </html>
