@@ -157,6 +157,9 @@ function enable_speech() {
 addEventListener("keydown", function(event) {
     if (event.keyCode === 13) {
         if (!playerName) startConnection();
+        else if (newGame.style.display === "block") {
+            startGame();
+        }
     }
 });
 
