@@ -224,6 +224,7 @@ socket.on("match found", function(data) {
     players[data.player.id] = data.player;
     opponentId = data.opponent;
     questions = data.questions;
+    console.log(questions);
     score1.textContent = "0";
     init_names();
 });

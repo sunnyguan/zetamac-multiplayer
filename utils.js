@@ -1,26 +1,26 @@
 function generate_question() {
-    var choice = getRandomInt(0, 3);
+    let choice = getRandomInt(0, 3);
 
-    var question = "";
+    let question = "";
     if (choice === 0) {
         // +
-        var num1 = getRandomInt(2, 100);
-        var num2 = getRandomInt(2, 100);
+        let num1 = getRandomInt(2, 100);
+        let num2 = getRandomInt(2, 100);
         question = num1 + " + " + num2;
     } else if (choice === 1) {
         // -
-        var num1 = getRandomInt(2, 100);
-        var num2 = getRandomInt(2, 100);
+        let num1 = getRandomInt(2, 100);
+        let num2 = getRandomInt(2, 100);
         question = num1 + num2 + " - " + num1;
     } else if (choice === 2) {
         // *
-        var num1 = getRandomInt(2, 12);
-        var num2 = getRandomInt(2, 100);
+        let num1 = getRandomInt(2, 12);
+        let num2 = getRandomInt(2, 100);
         question = num1 + " * " + num1;
     } else if (choice === 3) {
         // /
-        var num1 = getRandomInt(2, 12);
-        var num2 = getRandomInt(2, 100);
+        let num1 = getRandomInt(2, 12);
+        let num2 = getRandomInt(2, 100);
         question = num1 * num2 + " / " + num1;
     }
     return question;
@@ -34,9 +34,9 @@ function getRandomInt(min, max) {
 
 module.exports = function() {
     this.generate_questions = function generate_questions(count) {
-        var questions = [];
-        for (var i = 0; i < count; i++) {
-            var question = generate_question();
+        let questions = [];
+        for (let i = 0; i < count; i++) {
+            let question = generate_question();
             questions.push(question);
         }
         return questions;
