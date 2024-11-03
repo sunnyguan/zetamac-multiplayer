@@ -122,7 +122,8 @@ io.on("connection", function(socket) {
                                 'player1': players[socket.id].name,
                                 'player2': players[key].name,
                                 'score1': parseInt(players[socket.id].score),
-                                'score2': parseInt(players[key].score)
+                                'score2': parseInt(players[key].score),
+                                'timestamp': new Date().toISOString()
                             });
                         }
                         clearInterval(x);
